@@ -1,0 +1,46 @@
+services:
+  backend:
+    build: ./backend
+    container_name: wallet-php
+    volumes:
+      - ./backend:/var/www/html
+    depends_on:
+      - db
+    networks:
+      - wallet-net
+
+  db:
+    image: mysql:8.0
+    container_name: wallet-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: wallet
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: wallet_user
+      MYSQL_PASSWORD: wallet_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - wallet-net
+
+  nginx:
+    image: nginx:alpine
+    container_name: wallet-server
+    volumes:
+      - ./backend:/var/www/html
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - wallet-net
+
+volumes:
+  db_data:
+
+networks:
+  wallet-net:
+    driver: bridge
