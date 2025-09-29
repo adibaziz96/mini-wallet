@@ -7,6 +7,7 @@ A Laravel + Vue 3 + Docker.
 - [Features](#features)
 - [Requirements](#requirements)
 - [Installation](#installation)
+- [Host Setup (Optional)](#host)
 - [Backend Setup](#backend-setup)
 - [Frontend Setup](#frontend-setup)
 - [Database Seeding](#database-seeding)
@@ -52,6 +53,19 @@ cd mini-wallet
 
 ---
 
+## Host Setup (Optional)
+
+If you want to use custom url (on MacOS):
+
+```bash
+nano /etc/hosts
+```
+Add your prefer domain
+127.0.0.1 wallet.local.com
+127.0.0.1 api-wallet.local.com
+
+---
+
 ## Backend Setup
 
 Install PHP dependencies:
@@ -73,9 +87,9 @@ Set database credentials in .env:
 DB_CONNECTION=mysql
 DB_HOST=db
 DB_PORT=3306
-DB_DATABASE=wallet_db
-DB_USERNAME=root
-DB_PASSWORD=root
+DB_DATABASE=wallet
+DB_USERNAME=wallet_user
+DB_PASSWORD=wallet_pass
 ```
 
 Generate application key:
@@ -89,6 +103,14 @@ Run migrations:
 ```bash
 php artisan migrate --seed
 ```
+
+Start Queue Worker:
+
+```bash
+php artisan queue:work
+```
+
+---
 
 ## Frontend Setup
 
@@ -104,24 +126,24 @@ Install Node dependencies:
 npm install
 ```
 
-
 Update API base URL in axios.js if needed:
 
 ```bash
 const api = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: "http://api-wallet.local.com",
   headers: {
     Authorization: `Bearer ${localStorage.getItem("token")}`,
   },
 });
 ```
 
-
 Start frontend:
 
 ```bash
 npm run dev
 ```
+
+---
 
 ## Build and start containers:
 
@@ -131,9 +153,9 @@ docker-compose up --build -d
 
 Containers:
 
-Laravel app → http://localhost:8000
+Laravel app → http://api-wallet.local.com
 
-Vue frontend → http://localhost:5173
+Vue frontend → http://wallet.local.com
 
 MySQL database → port 3306
 
@@ -152,14 +174,19 @@ Stop containers:
 docker-compose down
 ```
 
+---
+
 ## API Endpoints
 
-Method	Endpoint	Description
-POST	/api/login	Login user
-GET	/api/me	Get current user
-GET	/api/users	Get all users
-GET	/api/transactions	Get transactions (paginated)
-POST	/api/transactions	Make a transfer
+| Method | Endpoint                | Description                   |
+|--------|------------------------|------------------------------- |
+| POST   | `/api/login`            | Login user                    |
+| GET    | `/api/me`               | Get current authenticated user|
+| GET    | `/api/users`            | Get all users                 |
+| GET    | `/api/transactions`     | Get transactions (paginated)  |
+| POST   | `/api/transactions`     | Make a transfer               |
+
+---
 
 ## Notes
 
