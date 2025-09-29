@@ -169,6 +169,7 @@ function initEcho() {
 
   echo.private(`user.${currentUser.value.id}`)
     .listen('.TransactionMade', (e) => {
+      console.log(e)
       balance.value = e.balance;
       transactions.value.unshift(e);
       toast.success(`New transaction: $${e.amount} received!`);

@@ -47,6 +47,7 @@ class TransactionMade implements ShouldBroadcast
             'sender' => $this->transaction->sender,
             'receiver' => $this->transaction->receiver,
             'balance' => $this->user->balance,
+            'total_amount' => $this->transaction->total_amount,
         ];
     }
 }
